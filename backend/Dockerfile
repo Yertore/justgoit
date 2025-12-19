@@ -19,5 +19,7 @@ COPY --from=builder /app/app .
 
 EXPOSE 8089
 
+ENV PORT=8089
+
 USER nonroot:nonroot
 CMD ["./app"]

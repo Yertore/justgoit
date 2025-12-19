@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: justgoit-backend
+    ports:
+      - "8089:8089"
+    environment:
+      PORT: 8089
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: justgoit
+      DB_PASSWORD: justgoit
+      DB_NAME: justgoit
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16
+    container_name: justgoit-postgres
+    ports:
+      - "5433:5432"   # чтобы не конфликтовать с локальным Postgres
+    environment:
+      POSTGRES_USER: justgoit
+      POSTGRES_PASSWORD: justgoit
+      POSTGRES_DB: justgoit
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
