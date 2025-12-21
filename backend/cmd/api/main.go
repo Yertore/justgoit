@@ -20,6 +20,8 @@ import (
 	"justgoit-backend/internal/http/handlers"
 	"justgoit-backend/internal/repository/postgres"
 	"justgoit-backend/internal/service"
+
+	_ "justgoit-backend/docs"
 )
 
 func main() {

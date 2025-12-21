@@ -20,6 +20,20 @@ docker compose down -v
 docker compose up -d --build
 
 
+go get github.com/swaggo/gin-swagger
+go get github.com/swaggo/files
+go get github.com/swaggo/swag@latest
+go mod tidy
+swag --version
+swag init -g cmd/api/main.go
+или
+swag init \
+  -g cmd/api/main.go \
+  --parseDependency \
+  --parseInternal
+
+
+
 🧠 ОБЩАЯ КАРТИНА (СНАЧАЛА СУТЬ)
 Ты сейчас используешь архитектуру из мира:
   Clean Architecture

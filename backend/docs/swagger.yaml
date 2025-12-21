@@ -1,9 +1,99 @@
 basePath: /
+definitions:
+  justgoit-backend_internal_domain.Question:
+    properties:
+      answer:
+        type: string
+      category:
+        type: string
+      createdAt:
+        type: string
+      id:
+        type: integer
+      level:
+        type: string
+      popularity:
+        description: '%'
+        type: integer
+      title:
+        type: string
+    type: object
 host: localhost:8089
 info:
   contact: {}
   description: API for Go interview preparation platform
   title: JustGoIT API
   version: "1.0"
-paths: {}
+paths:
+  /questions:
+    get:
+      description: Returns list of questions ordered by popularity
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/justgoit-backend_internal_domain.Question'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all questions
+      tags:
+      - questions
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Question payload
+        in: body
+        name: question
+        required: true
+        schema:
+          $ref: '#/definitions/justgoit-backend_internal_domain.Question'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/justgoit-backend_internal_domain.Question'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create question
+      tags:
+      - questions
+  /questions/{id}:
+    get:
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/justgoit-backend_internal_domain.Question'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get question by id
+      tags:
+      - questions
 swagger: "2.0"

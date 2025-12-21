@@ -27,7 +27,6 @@ func NewQuestionHandler(s *service.QuestionService) *QuestionHandler {
 // @Success      201 {object} domain.Question
 // @Failure      400 {object} map[string]string
 // @Router       /questions [post]
-
 func (h *QuestionHandler) Create(c *gin.Context) {
 	var q domain.Question
 	if err := c.ShouldBindJSON(&q); err != nil {
@@ -43,6 +42,14 @@ func (h *QuestionHandler) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, q)
 }
 
+// GetByID godoc
+// @Summary      Get question by id
+// @Tags         questions
+// @Produce      json
+// @Param        id path int true "Question ID"
+// @Success      200 {object} domain.Question
+// @Failure      404 {object} map[string]string
+// @Router       /questions/{id} [get]
 func (h *QuestionHandler) GetByID(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {
@@ -67,7 +74,6 @@ func (h *QuestionHandler) GetByID(c *gin.Context) {
 // @Success      200 {array} domain.Question
 // @Failure      500 {object} map[string]string
 // @Router       /questions [get]
-
 func (h *QuestionHandler) List(c *gin.Context) {
 	res, err := h.service.List(c.Request.Context())
 	if err != nil {
