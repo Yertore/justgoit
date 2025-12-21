@@ -1,10 +1,7 @@
-version: "3.9"
-
 services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
     container_name: justgoit-backend
     ports:
       - "8089:8089"
@@ -17,13 +14,14 @@ services:
       DB_NAME: justgoit
     depends_on:
       - postgres
+      - migrate
     restart: unless-stopped
 
   postgres:
     image: postgres:16
     container_name: justgoit-postgres
     ports:
-      - "5433:5432"   # чтобы не конфликтовать с локальным Postgres
+      - "5433:5432"
     environment:
       POSTGRES_USER: justgoit
       POSTGRES_PASSWORD: justgoit
@@ -31,6 +29,25 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
+
+  migrate:
+    image: migrate/migrate:v4.17.0
+    container_name: justgoit-migrate
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend/migrations:/migrations
+    entrypoint: >
+      sh -c "
+      until nc -z postgres 5432; do
+        echo 'waiting for postgres...';
+        sleep 2;
+      done;
+      migrate
+      -path=/migrations
+      -database=postgres://justgoit:justgoit@postgres:5432/justgoit?sslmode=disable
+      up
+      "
 
 volumes:
   postgres_data:

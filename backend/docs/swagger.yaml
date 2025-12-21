@@ -1,0 +1,9 @@
+basePath: /
+host: localhost:8089
+info:
+  contact: {}
+  description: API for Go interview preparation platform
+  title: JustGoIT API
+  version: "1.0"
+paths: {}
+swagger: "2.0"

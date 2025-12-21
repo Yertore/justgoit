@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API for Go interview preparation platform",
+        "title": "JustGoIT API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8089",
+    "basePath": "/",
+    "paths": {}
+}
