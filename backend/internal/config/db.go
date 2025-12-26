@@ -5,6 +5,32 @@ import (
 	"os"
 )
 
+/*
+Правильная логика (чистая архитектура)
+config/
+
+	└─ db.go        ← как подключиться
+
+repository/
+
+	└─ postgres/
+	    └─ question_repository.go ← SQL
+
+domain/
+
+	└─ question.go
+
+База данных — это кафе ☕
+-config/db.go → провести электричество и воду
+-repository/postgres → готовить блюда
+-service → решать, что готовить
+-handler → принимать заказы
+Ты же не хранишь проводку на кухне
+
+если настраивает → config
+если работает с данными → repository
+если принимает решения → service
+*/
 type DBConfig struct {
 	Host     string
 	Port     string
@@ -23,6 +49,7 @@ func LoadDBConfig() DBConfig {
 	}
 }
 
+// DSN = Data Source Name: строка подключения к базе данных
 func (c DBConfig) DSN() string {
 	return fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=disable",

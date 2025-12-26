@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 
-	"justgoit-backend/internal/http/handlers"
+	handlers "justgoit-backend/internal/http/handlers"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -18,11 +18,13 @@ func SetupRouter(qh *handlers.QuestionHandler) *gin.Engine {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
-	q := r.Group("/questions")
+	v1 := r.Group("/api/v1")
+	//TODO:
+	//qh.RegisterRoutes(v1)
 	{
-		q.POST("", qh.Create)
-		q.GET("", qh.List)
-		q.GET("/:id", qh.GetByID)
+		v1.POST("/questions", qh.Create)
+		v1.GET("/questions/:id", qh.GetByID)
+		v1.GET("/questions", qh.List)
 	}
 
 	return r

@@ -31,7 +31,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                                "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
                             }
                         }
                     },
@@ -59,12 +59,12 @@ const docTemplate = `{
                 "summary": "Create question",
                 "parameters": [
                     {
-                        "description": "Question payload",
+                        "description": "Create question",
                         "name": "question",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_request.CreateQuestionRequest"
                         }
                     }
                 ],
@@ -72,11 +72,20 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -109,7 +118,16 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
@@ -126,7 +144,35 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "justgoit-backend_internal_domain.Question": {
+        "justgoit-backend_internal_http_dto_request.CreateQuestionRequest": {
+            "type": "object",
+            "required": [
+                "answer",
+                "category",
+                "level",
+                "title"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "popularity": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "justgoit-backend_internal_http_dto_response.QuestionResponse": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -145,7 +191,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "popularity": {
-                    "description": "%",
                     "type": "integer"
                 },
                 "title": {
@@ -160,7 +205,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8089",
-	BasePath:         "/",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "JustGoIT API",
 	Description:      "API for Go interview preparation platform",

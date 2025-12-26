@@ -2,7 +2,7 @@
 // @version         1.0
 // @description     API for Go interview preparation platform
 // @host            localhost:8089
-// @BasePath        /
+// @BasePath        /api/v1
 
 package main
 
@@ -17,7 +17,7 @@ import (
 	"justgoit-backend/internal/config"
 	"justgoit-backend/internal/db"
 	httpapi "justgoit-backend/internal/http"
-	"justgoit-backend/internal/http/handlers"
+	handlers "justgoit-backend/internal/http/handlers"
 	"justgoit-backend/internal/repository/postgres"
 	"justgoit-backend/internal/service"
 

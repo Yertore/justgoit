@@ -7,7 +7,7 @@
         "version": "1.0"
     },
     "host": "localhost:8089",
-    "basePath": "/",
+    "basePath": "/api/v1",
     "paths": {
         "/questions": {
             "get": {
@@ -25,7 +25,7 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                                "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
                             }
                         }
                     },
@@ -53,12 +53,12 @@
                 "summary": "Create question",
                 "parameters": [
                     {
-                        "description": "Question payload",
+                        "description": "Create question",
                         "name": "question",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_request.CreateQuestionRequest"
                         }
                     }
                 ],
@@ -66,11 +66,20 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -103,7 +112,16 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/justgoit-backend_internal_domain.Question"
+                            "$ref": "#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     },
                     "404": {
@@ -120,7 +138,35 @@
         }
     },
     "definitions": {
-        "justgoit-backend_internal_domain.Question": {
+        "justgoit-backend_internal_http_dto_request.CreateQuestionRequest": {
+            "type": "object",
+            "required": [
+                "answer",
+                "category",
+                "level",
+                "title"
+            ],
+            "properties": {
+                "answer": {
+                    "type": "string"
+                },
+                "category": {
+                    "type": "string"
+                },
+                "level": {
+                    "type": "string"
+                },
+                "popularity": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 0
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "justgoit-backend_internal_http_dto_response.QuestionResponse": {
             "type": "object",
             "properties": {
                 "answer": {
@@ -139,7 +185,6 @@
                     "type": "string"
                 },
                 "popularity": {
-                    "description": "%",
                     "type": "integer"
                 },
                 "title": {
