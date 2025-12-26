@@ -1,10 +1,11 @@
+version: "3.9"
+
 services:
   backend:
-    build:
-      context: ./backend
-    container_name: justgoit-backend
-    ports:
-      - "8089:8089"
+    build: ./backend
+    container_name: backend
+    expose:
+      - "8089"
     environment:
       PORT: 8089
       DB_HOST: postgres
@@ -17,9 +18,26 @@ services:
       - migrate
     restart: unless-stopped
 
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+    - ./frontend/deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+
   postgres:
     image: postgres:16
-    container_name: justgoit-postgres
+    container_name: postgres
     ports:
       - "5433:5432"
     environment:
@@ -32,19 +50,14 @@ services:
 
   migrate:
     image: migrate/migrate:v4.17.0
-    container_name: justgoit-migrate
     depends_on:
       - postgres
     volumes:
       - ./backend/migrations:/migrations
     entrypoint: >
       sh -c "
-      until nc -z postgres 5432; do
-        echo 'waiting for postgres...';
-        sleep 2;
-      done;
-      migrate
-      -path=/migrations
+      until nc -z postgres 5432; do sleep 2; done;
+      migrate -path=/migrations
       -database=postgres://justgoit:justgoit@postgres:5432/justgoit?sslmode=disable
       up
       "
