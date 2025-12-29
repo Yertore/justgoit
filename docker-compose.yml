@@ -4,8 +4,10 @@ services:
   backend:
     build: ./backend
     container_name: backend
-    expose:
-      - "8089"
+    #expose:
+    #  - "8089"
+    ports:
+    - "8089:8089"   # вместо expose: "8089"
     environment:
       PORT: 8089
       DB_HOST: postgres

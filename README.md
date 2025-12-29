@@ -1,4 +1,25 @@
 # justgoit
+
+⚡ Dev режим фронта
+Backend через Docker:
+docker-compose up -d backend postgres migrate
+
+Frontend через Vite:
+cd frontend
+npm install
+npm run dev
+
+React dev сервер на http://localhost:5174
+Backend на http://localhost:8089
+Proxy в vite.config.js решает CORS
+
+🔹 Prod режим
+docker-compose up --build
+Соберётся фронт и backend
+Nginx отдаёт фронт и проксирует API на backend
+Доступ: http://localhost
+
+
 Команды Docker:
 docker compose down -v 
 docker compose up -d --build

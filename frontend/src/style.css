@@ -1,0 +1,129 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* body */
+body {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  background: #F5F5F5;
+  color: #1E1E1E;
+}
+
+main {
+  flex: 1; /* занимает всё свободное пространство между header и footer */
+}
+
+/* header */
+header {
+  background: linear-gradient(135deg, #00ADD8, #007ACC);
+  color: #fff;
+  padding: 30px 20px;
+  text-align: center;
+}
+
+header h1 { font-size: 2.8rem; margin-bottom: 10px; }
+header p { margin-bottom: 20px; }
+header a {
+  background: #fff; color: #007ACC;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s ease;
+}
+header a:hover { transform: scale(1.05); }
+
+/* features */
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px 20px;
+}
+
+.feature {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 260px;
+  transition: transform 0.3s;
+  text-align: center;
+}
+.feature:hover { transform: translateY(-10px); }
+.feature img { width: 60px; margin-bottom: 15px; }
+
+/* footer */
+footer {
+  background: #1E1E1E;
+  color: #fff;
+  padding: 2px;
+  text-align: center;
+}
+
+/* question */
+.question-list-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.questions-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.question-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.question-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.question-header {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.popularity {
+  color: #007ACC;
+  font-weight: bold;
+}
+
+.question-meta {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.question-answer {
+  margin: 10px 0;
+  color: #333;
+  line-height: 1.4;
+}
+
+.answer-btn {
+  background: #007ACC;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.answer-btn:hover {
+  background: #005fa3;
+}

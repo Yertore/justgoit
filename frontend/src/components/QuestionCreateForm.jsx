@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { createQuestion } from "../api/questions";
 
-export default function QuestionForm() {
+export default function QuestionCreateForm() {
   const [title, setTitle] = useState("");
   const [answer, setAnswer] = useState("");
   const [level, setLevel] = useState("junior");
