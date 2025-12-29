@@ -1,41 +1,40 @@
 # justgoit
+Команды Docker:
+docker compose down -v 
+docker compose up -d --build
+
+Docker problems
+docker-compose down -v --remove-orphans
+docker system prune -af
+docker-compose up --build
+
+Открой в браузере:
+SPA: http://localhost/
+Swagger: http://localhost/api/v1/swagger/index.html
+API: http://localhost/api/v1/questions
+
+
   Clean Architecture
   Hexagonal / Ports & Adapters
   DDD-lite (Domain Driven Design)
 
-GitHub
-  ↓ (push)
-GitHub Actions (CI)
-  ↓
-Docker image
-  ↓
-VPS
-  ↓
-Docker container
-  ↓
-Domain + HTTPS
+GitHub(push) ->  GitHub Actions (CI) -> Docker image -> VPS -> Docker container -> Domain + HTTPS
 
-Coommands:
-docker build -t justgoit-backend .
-docker run -p 8089:8089 justgoit-backend
-
-docker compose down -v 
-docker compose up -d --build
-
-
+Swagger:
 go get github.com/swaggo/gin-swagger
 go get github.com/swaggo/files
 go get github.com/swaggo/swag@latest
 go mod tidy
 swag --version
+
+cd backend
 swag init -g cmd/api/main.go
-или
+или (наш кейс!!!)
 swag init \
   -g cmd/api/main.go \
   --parseDependency \
   --parseInternal
-
-  http://localhost:8089/swagger/index.html
+---------------------------------------
 
 Domain — это мозг.
 DTO — это рот и уши.

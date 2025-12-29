@@ -1,7 +1,6 @@
 // @title           JustGoIT API
 // @version         1.0
 // @description     API for Go interview preparation platform
-// @host            localhost:8089
 // @BasePath        /api/v1
 
 package main

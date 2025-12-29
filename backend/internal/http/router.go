@@ -25,7 +25,7 @@ func SetupRouter(qh *handlers.QuestionHandler) *gin.Engine {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "ok"})
@@ -35,9 +35,11 @@ func SetupRouter(qh *handlers.QuestionHandler) *gin.Engine {
 	//TODO:
 	//qh.RegisterRoutes(v1)
 	{
+		v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 		v1.POST("/questions", qh.Create)
 		v1.GET("/questions/:id", qh.GetByID)
 		v1.GET("/questions", qh.List)
+
 	}
 
 	return r
