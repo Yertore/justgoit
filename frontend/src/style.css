@@ -1,10 +1,10 @@
+/* Global layout & base styles */
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
 }
 
-/* body */
 body {
   display: flex;
   flex-direction: column;
@@ -14,22 +14,20 @@ body {
   min-height: 100vh;
 }
 
-main {
-  flex: 1; /* занимает всё свободное пространство между header и footer */
-}
+main { flex: 1; }
 
-/* header */
+/* Header */
 header {
   background: linear-gradient(135deg, #00ADD8, #007ACC);
   color: #fff;
   padding: 30px 20px;
   text-align: center;
 }
-
 header h1 { font-size: 2.8rem; margin-bottom: 10px; }
 header p { margin-bottom: 20px; }
 header a {
-  background: #fff; color: #007ACC;
+  background: #fff;
+  color: #007ACC;
   padding: 15px 30px;
   border-radius: 8px;
   font-weight: bold;
@@ -38,7 +36,7 @@ header a {
 }
 header a:hover { transform: scale(1.05); }
 
-/* features */
+/* Features */
 .features {
   display: flex;
   flex-wrap: wrap;
@@ -46,7 +44,6 @@ header a:hover { transform: scale(1.05); }
   gap: 30px;
   padding: 40px 20px;
 }
-
 .feature {
   background: #fff;
   padding: 20px;
@@ -58,38 +55,27 @@ header a:hover { transform: scale(1.05); }
 .feature:hover { transform: translateY(-10px); }
 .feature img { width: 60px; margin-bottom: 15px; }
 
-/* footer */
+/* Footer */
 footer {
   background: #1E1E1E;
   color: #fff;
   height: 50px;
   display: flex;
-  align-items: center; /* вертикальное центрирование текста */
-  justify-content: center; /* горизонтальное центрирование текста */
+  align-items: center;
+  justify-content: center;
 }
 
-/* filters & pagination */
-.filters select {
-  margin-right: 10px;
-  padding: 6px 10px;
-}
+/* Filters & Pagination */
+.filters select { margin-right: 10px; padding: 6px 10px; }
+.pagination { margin: 20px 0; }
+.pagination button { margin: 0 5px; padding: 6px 12px; cursor: pointer; }
 
-.pagination {
-  margin: 20px 0;
-}
-.pagination button {
-  margin: 0 5px;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-/* question */
+/* Questions list / cards */
 .questions-list {
   max-width: 800px;
   margin: 20px auto;
   padding: 0 20px;
 }
-
 .question-card {
   background: #fff;
   padding: 20px;
@@ -111,24 +97,16 @@ footer {
 }
 .question-card button:hover { background: #005f99; }
 
-.question-header {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-}
-
+.question-header { font-size: 1.2rem; margin-bottom: 5px; }
 .question-row {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 👈 кнопка влево, chips вправо */
+  justify-content: space-between;
   margin-top: 10px;
 }
+.question-chips { display: flex; align-items: center; gap: 10px; }
 
-.question-chips {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+/* Chips */
 .level-chip {
   padding: 4px 14px;
   border-radius: 999px;
@@ -138,24 +116,9 @@ footer {
   align-items: center;
   white-space: nowrap;
 }
-
-/* Junior */
-.level-junior {
-  background: #d7f4f4;
-  color: #00a3a3;
-}
-
-/* Middle */
-.level-middle {
-  background: #dbe9ff;
-  color: #2b6fff;
-}
-
-/* Senior */
-.level-senior {
-  background: #f1ddff;
-  color: #d155f7;
-}
+.level-junior { background: #d7f4f4; color: #00a3a3; }
+.level-middle { background: #dbe9ff; color: #2b6fff; }
+.level-senior { background: #f1ddff; color: #d155f7; }
 
 .topic {
   color: #261685;
@@ -166,7 +129,6 @@ footer {
   border: 1px solid #261685;
   border-radius: 999px;
 }
-
 .popularity {
   color: #80a00c;
   font-size: 0.80rem;
@@ -177,32 +139,119 @@ footer {
   border-radius: 999px;
 }
 
-.answer-wrapper {
-  margin-top: 12px;
-  padding-left: 12px;
-  border-left: 4px solid #007ACC;
-}
-
-.answer-content {
-  background: #f3f4f6;           /* светло-серый фон */
-  padding: 14px 16px;
-  border-radius: 8px;
-  color: #1e1e1e;
-  line-height: 1.6;
-  font-size: 0.95rem;
-}
-
-.answer-wrapper {
-  animation: answerFade 0.25s ease-out;
-}
-
+/* Answer appearance */
 @keyframes answerFade {
-  from {
-    opacity: 0;
-    transform: translateY(-4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.answer-wrapper { 
+  margin-top: 12px; 
+  animation: answerFade 0.25s ease-out; 
+}
+
+/* -------------------------------------------------------------------------
+   Code blocks (react-syntax-highlighter / prism / hljs / pre[class*="language-"])
+   Goals:
+   - single outer container draws background, rounded corners and color stripe
+   - absolutely remove any inner white background / inner rounded corners
+   - ensure good contrast: darker outer background and visible left stripe
+   ------------------------------------------------------------------------- */
+
+/* Base monospace for possible code containers */
+.answer-content pre,
+.answer-content pre[class*="language-"],
+.answer-content .react-syntax-highlighter,
+.answer-content .prism,
+.answer-content .hljs {
+  box-sizing: border-box;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #0f1720;
+}
+
+/* OUTER container styling (apply to common root containers) */
+.answer-content .react-syntax-highlighter,
+.answer-content pre[class*="language-"],
+.answer-content .prism,
+.answer-content .hljs,
+.answer-content pre {
+  /* more noticeable, darker background */
+  background: linear-gradient(180deg, #e3eef6 0%, #e8f0f6 100%) !important;
+  padding: 20px 20px !important;
+  border-radius: 14px !important;
+  position: relative;
+  overflow: visible;
+  margin: 18px 0 !important;
+  border-left: 4px solid #0066cc !important; /* visible left stripe */
+  box-shadow: 0 10px 30px rgba(8,18,36,0.04) !important;
+  color: inherit !important;
+}
+
+/* Strongly remove inner backgrounds/rounded corners/paddings for many DOM shapes.
+   This is intentionally aggressive to override theme/inlined styles from highlight libs. */
+.answer-content .react-syntax-highlighter *,
+.answer-content pre[class*="language-"] *,
+.answer-content .prism *,
+.answer-content .hljs * {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Specific common inner wrappers -> make fully transparent and edge-to-edge */
+.answer-content .react-syntax-highlighter > pre,
+.answer-content .react-syntax-highlighter > div > pre,
+.answer-content .react-syntax-highlighter > div,
+.answer-content pre[class*="language-"] pre,
+.answer-content pre[class*="language-"] > code,
+.answer-content pre[class*="language-"] > div,
+.answer-content .prism pre,
+.answer-content .prism code,
+.answer-content .hljs pre,
+.answer-content .hljs code {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Ensure the inner pre/code fill the outer container and don't add spacing */
+.answer-content .react-syntax-highlighter > pre,
+.answer-content .react-syntax-highlighter > div > pre,
+.answer-content pre[class*="language-"] {
+  width: 100% !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+/* If highlight theme injects token classes, ensure colors are readable */
+.answer-content .react-syntax-highlighter code,
+.answer-content .react-syntax-highlighter .token,
+.answer-content pre[class*="language-"],
+.answer-content .hljs {
+  color: #0f1720 !important;
+}
+
+/* Inline code style */
+.inline-code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+  font-size: 0.95em;
+  background: #eef2f6;
+  color: #0f1720;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .answer-content .react-syntax-highlighter,
+  .answer-content pre[class*="language-"] {
+    padding: 12px !important;
+    border-left-width: 6px !important;
   }
 }

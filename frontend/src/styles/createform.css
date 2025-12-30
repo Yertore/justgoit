@@ -1,0 +1,331 @@
+/* createform.css — corrected: Level и Popularity одинакового размера */
+
+/* Ensure consistent box-sizing inside modal to avoid accidental overflow */
+.modal,
+.modal * {
+  box-sizing: border-box;
+}
+
+/* Floating Action Button (FAB) */
+.fab {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(180deg, #0078f4 0%, #0063d1 100%);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(6, 63, 165, 0.24);
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.fab:hover { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(6,63,165,0.28); }
+.fab:active { transform: translateY(-1px); }
+.fab svg { display: block; color: #fff; }
+
+/* Modal overlay and window */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 20, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1400;
+  padding: 20px;
+  overscroll-behavior: none;
+}
+
+/* modal window */
+.modal {
+  width: 100%;
+  max-width: 920px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 24px 60px rgba(12, 20, 30, 0.22);
+  overflow: hidden; /* prevent inner content creating horizontal scroll */
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* header */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #eef3f6;
+  background: linear-gradient(180deg, #f9fbfd 0%, #f6f9fb 100%);
+}
+.modal-header h3 { margin: 0; font-size: 1.1rem; color: #0f1720; }
+.btn-icon {
+  background: transparent;
+  border: none;
+  font-size: 1.05rem;
+  cursor: pointer;
+  color: #60708a;
+}
+
+/* body (form) */
+.modal-body {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;    /* vertical scroll only */
+  overflow-x: hidden;  /* prevent horizontal scroll */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  max-height: calc(90vh - 120px);
+}
+
+/* labels & rows */
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #24303b;
+}
+.label.small { width: 100%; }
+
+/* form-row: ensure children can shrink (min-width:0) so no horizontal overflow */
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* BOTH fields in the row share space equally and shrink nicely */
+.form-row .label.small {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* small-input for numeric field (popularity) — let it behave like other inputs */
+.small-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ensure select / number fields visually align with inputs */
+.form-row .input,
+.form-row .small-input,
+.form-row select {
+  height: 44px;
+}
+
+/* Inputs */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #e1e7ee;
+  background: #fff;
+  font-size: 0.95rem;
+  color: #0f1720;
+  outline: none;
+  transition: box-shadow 0.12s ease, border-color 0.12s ease;
+  box-sizing: border-box;
+}
+
+/* Title textarea compact initial height, resizable vertically */
+.title-textarea {
+  height: 48px;        /* compact initial height as you fixed */
+  min-height: 48px;
+  max-height: 140px;
+  padding: 8px 10px;
+  resize: vertical;
+  border-radius: 8px;
+  border: 1px solid #e1e7ee;
+  background: #fff;
+  font-size: 0.95rem;
+  color: #0f1720;
+  line-height: 1.3;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+/* Answer textarea */
+.textarea {
+  min-height: 160px;
+  max-height: 50vh;
+  overflow: auto;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e1e7ee;
+  background: #fff;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #0f1720;
+  box-sizing: border-box;
+}
+
+/* Unified focus style for inputs and textareas.
+   include :focus, :focus-visible and :focus:invalid to override UA styles */
+.input:focus,
+.input:focus-visible,
+.textarea:focus,
+.textarea:focus-visible,
+.title-textarea:focus,
+.title-textarea:focus-visible,
+.input:focus:invalid,
+.textarea:focus:invalid,
+.title-textarea:focus:invalid {
+  outline: none !important;
+  border-color: #66a3ff !important;
+  box-shadow: 0 6px 20px rgba(6, 111, 255, 0.12) !important;
+  -webkit-box-shadow: 0 6px 20px rgba(6,111,255,0.12) !important;
+}
+
+/* Override inner focus styles in some browsers */
+.input::-moz-focus-inner,
+.textarea::-moz-focus-inner,
+.title-textarea::-moz-focus-inner {
+  border: 0;
+}
+:focus { outline: none; }
+
+/* make selects visually match height */
+.input[type="select"],
+select.input {
+  height: 44px;
+}
+
+/* hint under textarea */
+.hint {
+  font-size: 0.85rem;
+  color: #65758a;
+  margin-top: 6px;
+}
+
+/* footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 12px 18px;
+  border-top: 1px solid #eef3f6;
+  background: #fbfdfe;
+}
+
+/* buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-primary {
+  background: linear-gradient(180deg, #0078f4 0%, #0063d1 100%);
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 98, 200, 0.14);
+  border: none;
+}
+.btn-secondary {
+  background: #ffffff;
+  color: #203040;
+  border: 1px solid #e1e7ee;
+}
+
+/* Responsive tweaks */
+@media (max-width: 720px) {
+  .fab { width: 56px; height: 56px; right: 16px; bottom: 16px; }
+  .modal { max-width: 100%; border-radius: 10px; margin: 0 6px; }
+  .form-row { flex-direction: column; align-items: stretch; }
+  .form-row .label.small { flex: 1 1 auto; min-width: 0; }
+  .modal-body { padding: 12px; max-height: 80vh; }
+  .modal-header, .modal-footer { padding: 12px; }
+}
+
+
+/* Add to your existing createform.css or replace it — this block contains toast styles only.
+   (If you already replaced createform.css earlier, просто добавьте этот фрагмент в конец файла.)
+*/
+
+/* Toast container (top-center) */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1600;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none; /* allow clicks through empty areas */
+}
+
+/* Single toast */
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 320px;
+  max-width: 760px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(8, 18, 36, 0.12);
+  color: #fff;
+  background: linear-gradient(180deg, rgba(0,0,0,0.14), rgba(0,0,0,0.06));
+  animation: toastIn 260ms cubic-bezier(.2,.9,.3,1);
+  position: relative;
+}
+
+/* types */
+.toast-success {
+  background: linear-gradient(180deg, #2bb673 0%, #1fa35d 100%);
+}
+.toast-error {
+  background: linear-gradient(180deg, #f04a4a 0%, #d93a3a 100%);
+}
+
+/* left icon */
+.toast-left { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+.toast-left svg { display: block; }
+
+/* body */
+.toast-body { display: flex; flex-direction: column; }
+.toast-title { font-weight: 700; font-size: 0.98rem; line-height: 1; }
+.toast-message { font-size: 0.9rem; opacity: 0.95; margin-top: 4px; }
+
+/* close button */
+.toast-close {
+  margin-left: 12px;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.toast-close:hover { background: rgba(255,255,255,0.18); }
+
+/* animation */
+@keyframes toastIn {
+  from { transform: translateY(-8px) scale(.99); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* small screens */
+@media (max-width: 480px) {
+  .toast { min-width: 260px; margin: 0 12px; padding: 12px; border-radius: 10px; }
+  .toast-title { font-size: 0.95rem; }
+  .toast-message { font-size: 0.85rem; }
+}
