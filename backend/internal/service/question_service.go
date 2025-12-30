@@ -23,6 +23,6 @@ func (s *QuestionService) GetByID(ctx context.Context, id int64) (*domain.Questi
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *QuestionService) List(ctx context.Context) ([]domain.Question, error) {
-	return s.repo.List(ctx)
+func (s *QuestionService) List(ctx context.Context, offset, limit int, level, category, sortBy, order string) ([]domain.Question, int, error) {
+	return s.repo.List(ctx, offset, limit, level, category, sortBy, order)
 }

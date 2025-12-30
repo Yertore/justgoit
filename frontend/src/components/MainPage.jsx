@@ -9,9 +9,7 @@ export default function MainPage() {
     return (
         <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
             <Header />
-            <Cards />
             <QuestionList />
-            <Footer />
         </div>
         
     )

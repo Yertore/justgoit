@@ -1,51 +1,52 @@
-INSERT INTO questions (title, answer, level, category, popularity)
-VALUES
-(
-  'Что такое goroutine?',
-  'Goroutine — это лёгкий поток выполнения, управляемый Go runtime.',
-  'junior',
-  'concurrency',
-  95
-),
-(
-  'Чем goroutine отличается от thread?',
-  'Goroutine легче, их тысячи, управляются планировщиком Go, а не ОС.',
-  'junior',
-  'concurrency',
-  90
-),
-(
-  'Что такое channel?',
-  'Channel — это типизированный канал для безопасного обмена данными между goroutine.',
-  'junior',
-  'concurrency',
-  92
-),
-(
-  'Как работает garbage collector в Go?',
-  'Go использует трицветный mark-and-sweep GC с concurrent marking.',
-  'middle',
-  'memory',
-  85
-),
-(
-  'Что такое escape analysis?',
-  'Механизм, определяющий, будет ли переменная размещена в heap или stack.',
-  'middle',
-  'memory',
-  80
-),
-(
-  'Что такое context.Context?',
-  'Context используется для управления временем жизни запросов, отменой и дедлайнами.',
-  'middle',
-  'stdlib',
-  88
-),
-(
-  'Как работает scheduler в Go?',
-  'Scheduler использует модель GMP (Goroutine, Machine, Processor).',
-  'senior',
-  'runtime',
-  75
-);
+INSERT INTO questions (title, answer, level, category, popularity) VALUES
+('Что такое goroutine?', 'Goroutine — это лёгкий поток выполнения, управляемый Go runtime.', 'junior', 'concurrency', 95),
+('Что такое channel?', 'Channel — это типизированный канал для безопасного обмена данными между goroutine.', 'junior', 'concurrency', 92),
+('Чем goroutine отличается от thread?', 'Goroutine легче, их тысячи, управляются планировщиком Go, а не ОС.', 'junior', 'concurrency', 90),
+('Как работает garbage collector в Go?', 'Go использует трицветный mark-and-sweep GC с concurrent marking.', 'middle', 'memory', 85),
+('Что такое escape analysis?', 'Механизм, определяющий, будет ли переменная размещена в heap или stack.', 'middle', 'memory', 80),
+('Как работает scheduler в Go?', 'Scheduler использует модель GMP (Goroutine, Machine, Processor).', 'senior', 'runtime', 75),
+('Что такое context.Context?', 'Context используется для управления временем жизни запросов, отменой и дедлайнами.', 'middle', 'stdlib', 88),
+('Что такое defer?', 'Defer позволяет отложить выполнение функции до выхода из текущей.', 'junior', 'stdlib', 70),
+('Что такое panic?', 'Panic используется для критических ошибок, остановки выполнения.', 'junior', 'error-handling', 65),
+('Что такое recover?', 'Recover позволяет перехватывать panic и предотвращать падение программы.', 'middle', 'error-handling', 68),
+('Как использовать select с каналами?', 'Select позволяет слушать несколько каналов одновременно.', 'middle', 'concurrency', 77),
+('Что такое mutex?', 'Mutex используется для синхронизации доступа к общим данным.', 'junior', 'concurrency', 82),
+('Что такое RWMutex?', 'RWMutex позволяет разделять чтение и запись в конкурентной среде.', 'middle', 'concurrency', 79),
+('Как работает slice в Go?', 'Slice — динамический массив с указателями на underlying array.', 'junior', 'stdlib', 85),
+('Что такое map в Go?', 'Map — это хэш-таблица для хранения ключ-значение.', 'junior', 'stdlib', 88),
+('Как работает append?', 'Append расширяет slice и возвращает новый с добавленным элементом.', 'junior', 'stdlib', 80),
+('Что такое interface?', 'Interface описывает набор методов без их реализации.', 'junior', 'types', 92),
+('Как работает type assertion?', 'Type assertion позволяет получить конкретный тип из interface.', 'middle', 'types', 75),
+('Что такое struct?', 'Struct — пользовательский тип с набором полей.', 'junior', 'types', 90),
+('Как работают методы на struct?', 'Методы позволяют добавлять поведение к struct.', 'middle', 'types', 82),
+('Что такое pointer?', 'Pointer хранит адрес другой переменной.', 'junior', 'types', 88),
+('Что такое nil?', 'Nil — нулевое значение для ссылочных типов.', 'junior', 'stdlib', 85),
+('Как использовать range?', 'Range используется для перебора элементов массивов, слайсов, map.', 'junior', 'stdlib', 80),
+('Что такое defer panic recover?', 'Комбинация для безопасной обработки ошибок.', 'senior', 'error-handling', 75),
+('Как работает slice copy?', 'Copy копирует элементы из одного slice в другой.', 'middle', 'stdlib', 78),
+('Что такое goroutine leak?', 'Когда goroutine остается висеть после завершения работы.', 'senior', 'concurrency', 70),
+('Что такое buffered channel?', 'Канал с буфером, позволяет не блокироваться сразу при записи.', 'middle', 'concurrency', 85),
+('Как работает unbuffered channel?', 'Канал без буфера блокирует отправителя до чтения.', 'junior', 'concurrency', 80),
+('Что такое select default?', 'Default позволяет не блокироваться, если каналы пусты.', 'middle', 'concurrency', 75),
+('Что такое atomic?', 'Atomic операции безопасны для конкурентного использования.', 'senior', 'concurrency', 65),
+('Как работает json.Marshal?', 'Конвертирует struct или map в JSON.', 'junior', 'stdlib', 88),
+('Как работает json.Unmarshal?', 'Парсит JSON в struct или map.', 'junior', 'stdlib', 85),
+('Что такое embedding?', 'Позволяет включать один struct в другой.', 'middle', 'types', 80),
+('Как работает interface{}?', 'Пустой интерфейс может содержать любой тип.', 'junior', 'types', 90),
+('Что такое slice capacity?', 'Capacity — это размер underlying array, slice может быть меньше.', 'middle', 'stdlib', 78),
+('Что такое stack vs heap?', 'Stack — для локальных переменных, heap — для динамических.', 'middle', 'memory', 82),
+('Как работает defer в цикле?', 'Defer выполняется после выхода из функции, а не цикла.', 'senior', 'stdlib', 70),
+('Что такое panic vs error?', 'Panic критический, error контролируемый.', 'middle', 'error-handling', 88),
+('Что такое Go modules?', 'Система управления зависимостями.', 'junior', 'stdlib', 95),
+('Как работает go get?', 'Команда для установки модулей.', 'junior', 'stdlib', 90),
+('Что такое init function?', 'Init выполняется при старте пакета.', 'junior', 'stdlib', 85),
+('Что такое variadic function?', 'Variadic function принимает переменное количество аргументов.', 'middle', 'stdlib', 80),
+('Что такое closure?', 'Closure замыкание функции с доступом к внешним переменным.', 'middle', 'stdlib', 82),
+('Что такое panic stack trace?', 'Стек вызова при panic.', 'senior', 'error-handling', 75),
+('Что такое defer stack?', 'Стек defer вызовов.', 'senior', 'stdlib', 70),
+('Что такое channel direction?', 'Send-only, Receive-only каналы.', 'middle', 'concurrency', 78),
+('Что такое select timeout?', 'Select с таймаутом.', 'middle', 'concurrency', 80),
+('Что такое goroutine scheduler?', 'Механизм планирования goroutine.', 'senior', 'runtime', 72),
+('Что такое memory leak?', 'Утечка памяти.', 'senior', 'memory', 68),
+('Как работает profiling?', 'Профилирование Go программ.', 'middle', 'runtime', 75),
+('Что такое race condition?', 'Конфликт при параллельной работе.', 'senior', 'concurrency', 70);

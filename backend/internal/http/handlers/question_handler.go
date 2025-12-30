@@ -100,16 +100,27 @@ func (h *QuestionHandler) GetByID(c *gin.Context) {
 // @Failure      500 {object} map[string]string
 // @Router       /questions [get]
 func (h *QuestionHandler) List(c *gin.Context) {
-	questions, err := h.service.List(c.Request.Context())
+	// Параметры запроса
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+	level := c.Query("level")
+	category := c.Query("category")
+	sortBy := c.DefaultQuery("sort", "popularity")
+	order := c.DefaultQuery("order", "desc")
+
+	offset := (page - 1) * limit
+
+	questions, total, err := h.service.List(c.Request.Context(), offset, limit, level, category, sortBy, order)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	resp := make([]response.QuestionResponse, len(questions))
-	for i, q := range questions {
-		resp[i] = response.NewQuestionResponse(&q)
-	}
-
-	c.JSON(http.StatusOK, resp)
+	c.JSON(http.StatusOK, gin.H{
+		"questions":  questions,
+		"total":      total,
+		"page":       page,
+		"limit":      limit,
+		"totalPages": (total + limit - 1) / limit,
+	})
 }
