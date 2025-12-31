@@ -1,4 +1,5 @@
-export default function Cards() {
+import "../styles/features.css"
+export default function Features() {
     return (
         <section className="features">
             <div className="feature">

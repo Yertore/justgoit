@@ -39,7 +39,7 @@ func SetupRouter(qh *handlers.QuestionHandler) *gin.Engine {
 		v1.POST("/questions", qh.Create)
 		v1.GET("/questions/:id", qh.GetByID)
 		v1.GET("/questions", qh.List)
-
+		v1.PUT("/questions/:id", qh.Update)
 	}
 
 	return r

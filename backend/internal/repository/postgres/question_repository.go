@@ -2,8 +2,11 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"strconv"
+	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"justgoit-backend/internal/domain"
@@ -78,17 +81,47 @@ func (r *QuestionRepository) List(ctx context.Context, offset, limit int, level,
 		return nil, 0, err
 	}
 
-	// Сортировка
-	if sortBy == "" {
-		sortBy = "popularity"
-	}
-	if order == "" {
-		order = "DESC"
+	// --- Валидация сортировки (white-list) ---
+	// Разрешённые поля сортировки (добавьте/уберите по необходимости)
+	allowed := map[string]string{
+		"id":         "id",
+		"popularity": "popularity",
+		"created_at": "created_at",
+		"title":      "title",
+		"level":      "level",
+		"category":   "category",
 	}
 
-	query := "SELECT id, title, answer, level, category, popularity, created_at FROM questions " +
-		where + " ORDER BY " + sortBy + " " + order +
-		" LIMIT $" + strconv.Itoa(len(args)+1) + " OFFSET $" + strconv.Itoa(len(args)+2)
+	// По умолчанию сортировать по id
+	if sortBy == "" {
+		sortBy = "id"
+	}
+
+	// Нормализуем и проверяем sortBy
+	sortBy = strings.ToLower(sortBy)
+	if col, ok := allowed[sortBy]; ok {
+		sortBy = col
+	} else {
+		// Если неизвестный столбец — fallback на id
+		sortBy = "id"
+	}
+
+	// Нормализуем порядок
+	order = strings.ToUpper(order)
+	if order != "ASC" && order != "DESC" {
+		order = "DESC"
+	}
+	// -------------------------------------------------
+
+	// Формируем запрос безопасно (имя столбца вставляем только после проверки)
+	query := fmt.Sprintf(
+		"SELECT id, title, answer, level, category, popularity, created_at FROM questions %s ORDER BY %s %s LIMIT $%d OFFSET $%d",
+		where,
+		sortBy,
+		order,
+		len(args)+1,
+		len(args)+2,
+	)
 	args = append(args, limit, offset)
 
 	rows, err := r.db.Query(ctx, query, args...)
@@ -107,4 +140,48 @@ func (r *QuestionRepository) List(ctx context.Context, offset, limit int, level,
 	}
 
 	return qs, total, rows.Err()
+}
+
+// Replace existing Update with this version that returns the updated Question
+func (r *QuestionRepository) Update(ctx context.Context, q *domain.Question) (*domain.Question, error) {
+	// UPDATE ... RETURNING all columns we need
+	query := `
+        UPDATE questions
+        SET title = $1,
+            answer = $2,
+            level = $3,
+            category = $4,
+            popularity = $5
+        WHERE id = $6
+        RETURNING id, title, answer, level, category, popularity, created_at
+    `
+
+	var updated domain.Question
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		q.Title,
+		q.Answer,
+		q.Level,
+		q.Category,
+		q.Popularity,
+		q.ID,
+	).Scan(
+		&updated.ID,
+		&updated.Title,
+		&updated.Answer,
+		&updated.Level,
+		&updated.Category,
+		&updated.Popularity,
+		&updated.CreatedAt,
+	)
+	if err != nil {
+		// if no rows returned, QueryRow().Scan returns pgx.ErrNoRows (or similar) — map it to domain.ErrNotFound
+		if err == pgx.ErrNoRows {
+			return nil, domain.ErrNotFound
+		}
+		return nil, err
+	}
+
+	return &updated, nil
 }

@@ -1,6 +1,16 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { fetchQuestions } from "../api/questions";
 import MarkdownAnswer from "./MarkdownAnswer";
+import QuestionEdit from "./QuestionEdit";
+import QuestionCreate from "./QuestionCreate";
+
+import "../styles/questions.css"
+import "../styles/modalform.css"; 
+import "../styles/answer.css"
+import "../styles/chips.css"
+import "../styles/filters.css"
+import "../styles/pagination.css"
+
 
 const KNOWN_CATEGORIES = [
   "concurrency",
@@ -19,8 +29,12 @@ export default function QuestionList() {
   const [category, setCategory] = useState("");
   const [totalPages, setTotalPages] = useState(1);
   const [openAnswers, setOpenAnswers] = useState({});
+  const [editingQuestion, setEditingQuestion] = useState(null);
 
-  // useCallback so the event listener can depend on a stable reference
+  // notification state (for toasts)
+  const [notification, setNotification] = useState(null);
+  const notifTimerRef = useRef(null);
+
   const loadQuestions = useCallback(() => {
     fetchQuestions({ page, limit: 10, level, category })
       .then((data) => {
@@ -35,30 +49,55 @@ export default function QuestionList() {
       });
   }, [page, level, category]);
 
-  // initial and reactive loading
   useEffect(() => {
     loadQuestions();
   }, [loadQuestions]);
 
-  // Listen for questions created elsewhere and reload current list
+  // reload on create/update events
   useEffect(() => {
-    const handler = (e) => {
-      // Optionally: use e.detail (created question) to decide more clever behavior.
-      // For now: reload the current page with current filters so UI stays consistent.
-      loadQuestions();
-    };
-
+    const handler = () => loadQuestions();
     window.addEventListener("question:created", handler);
-    // also support older document-based dispatch in fallback
+    window.addEventListener("question:updated", handler);
     document.addEventListener("question:created", handler);
-
+    document.addEventListener("question:updated", handler);
     return () => {
       window.removeEventListener("question:created", handler);
+      window.removeEventListener("question:updated", handler);
       document.removeEventListener("question:created", handler);
+      document.removeEventListener("question:updated", handler);
     };
   }, [loadQuestions]);
 
-  // handlers
+  // listen for global notifications (app:notification)
+  useEffect(() => {
+    const handler = (e) => {
+      const d = e?.detail || {};
+      setNotification({ id: Date.now(), ...d });
+    };
+    window.addEventListener("app:notification", handler);
+    document.addEventListener("app:notification", handler);
+    return () => {
+      window.removeEventListener("app:notification", handler);
+      document.removeEventListener("app:notification", handler);
+    };
+  }, []);
+
+  // auto-hide notification
+  useEffect(() => {
+    if (!notification) return;
+    if (notifTimerRef.current) clearTimeout(notifTimerRef.current);
+    notifTimerRef.current = setTimeout(() => {
+      setNotification(null);
+      notifTimerRef.current = null;
+    }, 3500);
+    return () => {
+      if (notifTimerRef.current) {
+        clearTimeout(notifTimerRef.current);
+        notifTimerRef.current = null;
+      }
+    };
+  }, [notification]);
+
   const handleLevelChange = (e) => {
     setLevel(e.target.value);
     setPage(1);
@@ -100,24 +139,35 @@ export default function QuestionList() {
             <strong>{q?.Title}</strong>
           </div>
           <div className="question-row">
-            <button
-              onClick={() =>
-                setOpenAnswers((prev) => ({
-                  ...prev,
-                  [q?.ID]: !prev[q?.ID],
-                }))
-              }
-            >
-              {openAnswers[q?.ID] ? "Скрыть ответ" : "Показать ответ"}
-            </button>
-            <div className="question-chips">
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() =>
+                  setOpenAnswers((prev) => ({
+                    ...prev,
+                    [q?.ID]: !prev[q?.ID],
+                  }))
+                }
+              >
+                {openAnswers[q?.ID] ? "Скрыть ответ" : "Показать ответ"}
+              </button>
+
+              {/* Edit button */}
+              <button
+                onClick={() => setEditingQuestion(q)}
+              >
+                Edit
+              </button>
+            </div>
+
+            <div className="chips">
               <span className={`level-chip level-${q?.Level?.toLowerCase()}`}>
                 {q?.Level}
               </span>
-              <span className="topic">Тема: {q?.Category}</span>
-              <span className="popularity">Популярность: {q?.Popularity}%</span>
+              <span className="topicl-chip">Тема: {q?.Category}</span>
+              <span className="popularityl-chip">Популярность: {q?.Popularity}%</span>
             </div>
           </div>
+
           {openAnswers[q?.ID] && (
             <div className="answer-wrapper">
               <div className="answer-content">
@@ -139,6 +189,38 @@ export default function QuestionList() {
         <button disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
           Next
         </button>
+      </div>
+
+      {/* Create modal */}
+      <QuestionCreate />
+      {/* Edit modal */}
+      {editingQuestion && (
+        <QuestionEdit question={editingQuestion} onClose={() => setEditingQuestion(null)} />
+      )}
+
+      {/* Global toast (renders inside QuestionList so always mounted on list page) */}
+      <div className="toast-container" aria-live="polite" aria-atomic="true" style={{ pointerEvents: "none" }}>
+        {notification && (
+          <div className={`toast toast-${notification.type || "success"}`} role="status" style={{ pointerEvents: "auto" }}>
+            <div className="toast-left">
+              {notification.type === "success" ? (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M20 6L9 17l-5-5" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                  <path d="M12 9v4" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M12 17h.01" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+            <div className="toast-body">
+              <div className="toast-title">{notification.title}</div>
+              <div className="toast-message">{notification.message}</div>
+            </div>
+            <button className="toast-close" onClick={() => setNotification(null)} aria-label="Close notification">✕</button>
+          </div>
+        )}
       </div>
     </div>
   );

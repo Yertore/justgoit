@@ -1,0 +1,39 @@
+
+/* Chips */
+.chips { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.level-chip {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.80rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.level-junior { background: #d7f4f4; color: #00a3a3; }
+.level-middle { background: #dbe9ff; color: #2b6fff; }
+.level-senior { background: #f1ddff; color: #d155f7; }
+
+.topicl-chip {
+  color: #261685;
+  font-size: 0.80rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  margin: 5px;
+  border: 1px solid #261685;
+  border-radius: 999px;
+}
+.popularityl-chip {
+  color: #80a00c;
+  font-size: 0.80rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  margin: 5px;
+  border: 1px solid #80a00c;
+  border-radius: 999px;
+}

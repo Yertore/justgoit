@@ -20,6 +20,26 @@ definitions:
     - level
     - title
     type: object
+  justgoit-backend_internal_http_dto_request.UpdateQuestionRequest:
+    properties:
+      answer:
+        type: string
+      category:
+        type: string
+      level:
+        type: string
+      popularity:
+        maximum: 100
+        minimum: 0
+        type: integer
+      title:
+        type: string
+    required:
+    - answer
+    - category
+    - level
+    - title
+    type: object
   justgoit-backend_internal_http_dto_response.QuestionResponse:
     properties:
       answer:
@@ -124,6 +144,49 @@ paths:
               type: string
             type: object
       summary: Get question by id
+      tags:
+      - questions
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Question ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update question
+        in: body
+        name: question
+        required: true
+        schema:
+          $ref: '#/definitions/justgoit-backend_internal_http_dto_request.UpdateQuestionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/justgoit-backend_internal_http_dto_response.QuestionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update question
       tags:
       - questions
 swagger: "2.0"

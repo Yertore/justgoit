@@ -26,3 +26,7 @@ func (s *QuestionService) GetByID(ctx context.Context, id int64) (*domain.Questi
 func (s *QuestionService) List(ctx context.Context, offset, limit int, level, category, sortBy, order string) ([]domain.Question, int, error) {
 	return s.repo.List(ctx, offset, limit, level, category, sortBy, order)
 }
+
+func (s *QuestionService) Update(ctx context.Context, q *domain.Question) (*domain.Question, error) {
+	return s.repo.Update(ctx, q)
+}
