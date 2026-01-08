@@ -31,6 +31,26 @@ export default function QuestionModalForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ---- minimal scroll lock (add this)
+  useEffect(() => {
+    if (!open) return;
+    // snapshot
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    // apply
+    document.body.classList.add("modal-open");
+    // keep visual position by shifting body up
+    document.body.style.top = `-${scrollY}px`;
+
+    return () => {
+      // remove class + top
+      document.body.classList.remove("modal-open");
+      document.body.style.top = "";
+      // restore scroll
+      window.scrollTo(0, scrollY);
+    };
+  }, [open]);
+  // ---- end scroll lock
+
   // sync with initial changes (when editing a different item)
   useEffect(() => {
     setTitle(initial?.Title || "");

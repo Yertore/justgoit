@@ -103,6 +103,15 @@
   max-height: 90vh;
 }
 
+/* minimal class to prevent background scrolling */
+.modal-open {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
 /* header */
 .modal-header {
   display: flex;

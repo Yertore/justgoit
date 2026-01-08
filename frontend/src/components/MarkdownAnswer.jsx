@@ -4,65 +4,219 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-/* preprocess (ваша существующая логика) */
+/*
+  MarkdownAnswer.jsx - safer/conservative preprocess
+  - paragraph-based detector
+  - buffer consecutive code-like paragraphs into one fenced block
+  - COMMENTS (// ...) are treated as part of code
+  - do NOT auto-wrap inline identifiers or normalize HTML wrappers (safer)
+  - protect paragraphs that contain literal ``` or are pure inline-code like `Go`
+  - refined brace detection: avoid treating identifier{} (e.g. interface{}) as code
+*/
+
 function preprocess(raw) {
   if (!raw || typeof raw !== "string") return raw;
   let s = raw.replace(/\r\n/g, "\n");
 
-  let scanStart = 0;
-  while (true) {
-    const pkgMatch = s.slice(scanStart).match(/(?:^|\n)\s*package\s+main\b/);
-    if (!pkgMatch) break;
-    const pkgIndex = scanStart + pkgMatch.index;
-    const rest = s.slice(pkgIndex);
-    const endMatch = rest.match(/\n\s*}\s*(?=\n|$)/);
-    let endIndex;
-    if (endMatch) {
-      endIndex = pkgIndex + endMatch.index + endMatch[0].length;
-    } else {
-      const dbl = rest.search(/\n{2,}/);
-      endIndex = dbl === -1 ? s.length : pkgIndex + dbl;
-    }
+  // Split by existing fenced blocks and keep them intact.
+  const parts = s.split(/(```[\s\S]*?```)/g);
 
-    const snippet = s.slice(pkgIndex, endIndex);
-    if (/```/.test(snippet)) {
-      scanStart = endIndex;
+  // Stripper to ignore strings/comments when checking braces/assignments
+  function makeStripper() {
+    let inBlockComment = false;
+    return function strip(line) {
+      let out = "";
+      let inDouble = false;
+      let inBacktick = false;
+      for (let i = 0; i < line.length; i++) {
+        if (!inDouble && !inBacktick && !inBlockComment && line[i] === "/" && line[i + 1] === "*") {
+          inBlockComment = true;
+          i++;
+          continue;
+        }
+        if (inBlockComment && line[i] === "*" && line[i + 1] === "/") {
+          inBlockComment = false;
+          i++;
+          continue;
+        }
+        if (inBlockComment) continue;
+        if (!inDouble && !inBacktick && line[i] === "/" && line[i + 1] === "/") {
+          break; // rest is comment
+        }
+        const ch = line[i];
+        if (ch === '"' && !inBacktick) {
+          inDouble = !inDouble;
+          continue;
+        }
+        if (ch === "`" && !inDouble) {
+          inBacktick = !inBacktick;
+          continue;
+        }
+        if (!inDouble && !inBacktick && !inBlockComment) {
+          out += ch;
+        }
+      }
+      return out;
+    };
+  }
+  const strip = makeStripper();
+
+  const keywordRE = /^\s*(package|import|func|type|var|const|for|if|switch|return|struct)\b/;
+  // conservative call regex: identifier( ...
+  const callRE = /[A-Za-z_][A-Za-z0-9_]*\s*\(/;
+  const simpleAssignRE = /:=/;
+  const anyAssignRE = /[:=]=/;
+  const hasCyrillic = (l) => /[А-Яа-яЁё]/.test(l);
+
+  // helper: detect braces that are standalone (not directly indicative of an identifier{} token)
+  function hasStandaloneBrace(s) {
+    // If we see a direct identifier followed immediately by empty braces (like "interface{}" or "T{}"),
+    // treat that pattern as non-decisive for "this is a code paragraph" (avoid false positives).
+    // NOTE: this is a conservative heuristic — it avoids classifying "interface{}" as code.
+    if (/\b[A-Za-z_][A-Za-z0-9_]*\{\}/.test(s)) return false;
+
+    // Otherwise, consider braces standalone if '{' is not preceded by a word char,
+    // or '}' is not followed by a word char. This catches typical code forms like "[]int{", "){", "} )", etc.
+    return /(^|[^\w])\{/.test(s) || /\}([^\w]|$)/.test(s);
+  }
+
+  function isPureInlineCodeLine(line) {
+    return /^\s*`[^`]+`\s*$/.test(line);
+  }
+
+  function isCodeLikeLine(line) {
+    if (!line) return false;
+    // don't treat pure inline `...` as code
+    if (isPureInlineCodeLine(line)) return false;
+    // treat single-line comment as code-like (keep with code)
+    if (/^\s*\/\//.test(line)) return true;
+    if (keywordRE.test(line)) return true;
+    const stripped = strip(line);
+    if (hasStandaloneBrace(stripped)) return true;
+    if (simpleAssignRE.test(stripped)) return true; // ':='
+    if (/\b[A-Za-z_][A-Za-z0-9_]*\s*=\s*/.test(stripped)) return true; // plain =
+    if (callRE.test(stripped)) return true; // identifier( ...
+    if (/^\s{2,}|\t/.test(line)) return true;
+    if (anyAssignRE.test(stripped)) return true;
+    if (/[;]$/.test(stripped.trim())) return true;
+    return false;
+  }
+
+  // Process non-fenced parts by paragraphs, buffer consecutive code-like paragraphs
+  for (let p = 0; p < parts.length; p += 2) {
+    const block = parts[p];
+    if (!block) {
+      parts[p] = block;
       continue;
     }
 
-    const trimmed = snippet.replace(/^\n+/, "").replace(/\n+$/, "");
-    const fenced = "\n```go\n" + trimmed + "\n```\n";
-    s = s.slice(0, pkgIndex) + fenced + s.slice(endIndex);
-    scanStart = pkgIndex + fenced.length;
-  }
+    const lines = block.split("\n");
+    const out = [];
+    let i = 0;
+    let codeBuffer = null;
 
-  const parts = s.split(/(```[\s\S]*?```)/g);
-  const codeLinePattern = /(?::=)|\b(var|const|type|func)\b|(?:[A-Za-z_][A-Za-z0-9_]*\.)+[A-Za-z_][A-Za-z0-9_]*\(/;
-
-  for (let i = 0; i < parts.length; i += 2) {
-    const lines = parts[i].split("\n");
-    for (let j = 0; j < lines.length; j++) {
-      const line = lines[j];
-      if (!line || /^\s*$/.test(line)) continue;
-
-      if (codeLinePattern.test(line)) {
-        const hasCyrillic = /[А-Яа-яЁё]/.test(line);
-        const hasAssign = /:=/.test(line);
-        const hasImmediateCall = /(?:[A-Za-z_][A-Za-z0-9_]*\.)+[A-Za-z_][A-Za-z0-9_]*\(/.test(line);
-        const startsWithKeyword = /^\s*(var|const|type|func)\b/.test(line);
-
-        if (hasCyrillic && !hasAssign && !hasImmediateCall && !startsWithKeyword) {
+    while (i < lines.length) {
+      // Blank line
+      if (/^\s*$/.test(lines[i])) {
+        if (codeBuffer !== null) {
+          // Don't push a separator here — we will insert exactly one separator
+          // when we append the next code paragraph. Just skip the blank line.
+          i++;
+          continue;
+        } else {
+          out.push(lines[i]);
+          i++;
           continue;
         }
+      }
 
-        const trimmedLine = line.trim();
-        lines[j] = "\n```go\n" + trimmedLine + "\n```\n";
+      // collect paragraph (consecutive non-blank lines)
+      const start = i;
+      while (i < lines.length && !/^\s*$/.test(lines[i])) i++;
+      const paraLines = lines.slice(start, i);
+
+      // If paragraph contains literal fenced marker, treat as plain paragraph (do not include into buffer)
+      const containsFenceMarker = paraLines.some((L) => /```/.test(L));
+      if (containsFenceMarker) {
+        if (codeBuffer !== null) {
+          out.push("```go");
+          out.push(...codeBuffer);
+          out.push("```");
+          codeBuffer = null;
+        }
+        out.push(...paraLines);
+        continue;
+      }
+
+      // Don't treat paragraphs that are ONLY pure inline-code lines as code
+      const allPureInline = paraLines.every((L) => isPureInlineCodeLine(L));
+      if (allPureInline) {
+        if (codeBuffer !== null) {
+          out.push("```go");
+          out.push(...codeBuffer);
+          out.push("```");
+          codeBuffer = null;
+        }
+        out.push(...paraLines);
+        continue;
+      }
+
+      // analyze paragraph: count code-like lines
+      let codeLikeCount = 0;
+      let strongCount = 0;
+      let anyCyr = false;
+      for (const L of paraLines) {
+        const stripped = strip(L);
+        if (isCodeLikeLine(L)) codeLikeCount++;
+        if (keywordRE.test(L) || simpleAssignRE.test(stripped) || callRE.test(stripped) || hasStandaloneBrace(stripped)) strongCount++;
+        if (hasCyrillic(L)) anyCyr = true;
+      }
+
+      const len = paraLines.length;
+      const codeLikeRatio = len ? codeLikeCount / len : 0;
+
+      let isCodePara = false;
+      if (keywordRE.test(paraLines[0])) {
+        isCodePara = true;
+      } else if (strongCount > 0) {
+        isCodePara = true;
+      } else if (codeLikeCount >= 2 && (strongCount >= 1 || codeLikeRatio >= 0.6 || len >= 4)) {
+        isCodePara = true;
+      } else {
+        isCodePara = false;
+      }
+      if (anyCyr && strongCount === 0) {
+        isCodePara = false;
+      }
+
+      if (isCodePara) {
+        if (codeBuffer === null) codeBuffer = [];
+        if (codeBuffer.length > 0) codeBuffer.push("");
+        codeBuffer.push(...paraLines);
+      } else {
+        if (codeBuffer !== null) {
+          out.push("```go");
+          out.push(...codeBuffer);
+          out.push("```");
+          codeBuffer = null;
+        }
+        out.push(...paraLines);
       }
     }
-    parts[i] = lines.join("\n");
+
+    if (codeBuffer !== null) {
+      out.push("```go");
+      out.push(...codeBuffer);
+      out.push("```");
+      codeBuffer = null;
+    }
+
+    parts[p] = out.join("\n");
   }
 
+  // Reassemble text
   s = parts.join("");
+
   return s;
 }
 
@@ -80,11 +234,6 @@ export default function MarkdownAnswer({ content }) {
 
           if (!inline) {
             const codeText = raw.replace(/\n$/, "");
-
-            // Важные props:
-            // - customStyle: убирает фон/паддинг у контейнера, задаваемого библиотекой
-            // - codeTagProps: снимает фон у внутреннего <code>
-            // Эти два вместе гарантируют, что не останется "внутреннего белого прямоугольника".
             return (
               <SyntaxHighlighter
                 style={oneLight}
