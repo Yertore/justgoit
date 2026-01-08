@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/modalform.css";
+import "../../styles/modalform.css"; 
 
 /**
  * Generic modal + question form.

@@ -1,4 +1,4 @@
-import "../styles/features.css"
+import "./features.css"
 export default function Features() {
     return (
         <section className="features">

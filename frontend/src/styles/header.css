@@ -1,0 +1,172 @@
+/* Fixed top header (full width) — replaces previous header behavior
+   - header фиксирован сверху по всей ширине
+   - body получает padding-top чтобы контент не скрывался под шапкой
+   - нет новых классов, используем только существующие селекторы
+*/
+
+/* header height token */
+:root {
+  --header-height: 72px; /* настройте по вкусу (например 64px, 80px) */
+}
+
+/* Ensure page content isn't hidden under the fixed header */
+body {
+  padding-top: var(--header-height);
+  box-sizing: border-box;
+}
+
+/* Header overall: fixed, full width */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: var(--header-height);
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  color: #0f1720;
+  border-bottom: 1px solid #eef3f6;
+  z-index: 1100;
+  display: block;
+  /* subtle shadow to separate from content */
+  box-shadow: 0 6px 20px rgba(9,30,66,0.04);
+}
+
+/* Inner container: center content, keep vertical centering */
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 12px;   /* horizontal padding inside fixed header */
+  box-sizing: border-box;
+}
+
+/* Brand (logo area) */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding-left: 6px;
+}
+
+/* Logo sizing — tuned to fit the fixed header */
+.site-logo {
+  height: 56px;   /* уменьшил немного, чтобы логотип не «выпирал» */
+  width: auto;
+  display: block;
+}
+
+/* Navigation (center) */
+.header-nav {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  padding: 0 12px;
+  height: 100%;
+  align-items: center;
+}
+
+.header-nav ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* Links */
+.header-nav a {
+  position: relative;
+  color: #0f1720;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.02em;
+  transition: color 160ms ease, transform 140ms ease;
+  display: inline-block;
+}
+
+/* Hover / focus */
+.header-nav a:hover,
+.header-nav a:focus {
+  color: #0060b8;
+  transform: translateY(-3px);
+  outline: none;
+}
+
+/* Animated underline */
+.header-nav a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  width: 56%;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #007acc, #005fb0);
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), opacity 220ms;
+  opacity: 0;
+}
+.header-nav a:hover::after,
+.header-nav a:focus::after {
+  transform: translateX(-50%) scaleX(1);
+  opacity: 1;
+}
+
+/* Focus-visible ring */
+.header-nav a:focus-visible {
+  box-shadow: 0 0 0 6px rgba(6,111,255,0.12);
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 920px) {
+  .header-nav ul { gap: 16px; }
+  .header-nav a { font-size: 0.94rem; }
+}
+
+@media (max-width: 720px) {
+  /* reduce header height on small screens */
+  :root { --header-height: 64px; }
+
+  .header-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 6px 12px;
+  }
+
+  .brand { padding-left: 8px; }
+
+  .header-nav {
+    order: 3;
+    justify-content: flex-start;
+    padding: 6px;
+    height: auto;
+  }
+
+  .header-nav ul {
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .site-logo {
+    height: 40px;
+    width: auto;
+  }
+
+  /* update body padding-top to match reduced header height */
+  body { padding-top: var(--header-height); }
+}

@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { fetchQuestions } from "../api/questions";
+import { fetchQuestions } from "../../api/questions";
 import MarkdownAnswer from "./MarkdownAnswer";
 import QuestionEdit from "./QuestionEdit";
 import QuestionCreate from "./QuestionCreate";
 
-import "../styles/questions.css"
-import "../styles/modalform.css"; 
-import "../styles/answer.css"
-import "../styles/chips.css"
-import "../styles/filters.css"
-import "../styles/pagination.css"
+import "../../styles/questions.css"
+import "../../styles/answer.css"
+import "../../styles/chips.css"
+import "../../styles/filters.css"
+import "../../styles/pagination.css"
 
 
 const KNOWN_CATEGORIES = [

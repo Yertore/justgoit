@@ -1,10 +1,20 @@
 /* Global layout & base styles */
+:root {
+  /* Подстройте высоту шапки под ваш header (должна совпадать с --header-height в header.css) */
+  --header-height: 72px;
+}
+
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
+/* Ensure page content isn't hidden under fixed header:
+   добавляем отступ сверху равный высоте шапки.
+   !important используется на случай, если где-то переопределяют padding у body.
+*/
 body {
   display: flex;
   flex-direction: column;
@@ -12,36 +22,14 @@ body {
   background: #F5F5F5;
   color: #1E1E1E;
   min-height: 100vh;
+
+  padding-top: var(--header-height) !important;
 }
 
-main { flex: 1; }
+/* main остаётся флекс-элементом для растяжения контента */
+main {
+  flex: 1;
+}
 
-/* Header */
-header {
-  background: linear-gradient(135deg, #00ADD8, #007ACC);
-  color: #fff;
-  padding: 30px 20px;
-  text-align: center;
-}
-header h1 { font-size: 2.8rem; margin-bottom: 10px; }
-header p { margin-bottom: 20px; }
-header a {
-  background: #fff;
-  color: #007ACC;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s ease;
-}
-header a:hover { transform: scale(1.05); }
-
-/* Footer */
-footer {
-  background: #1E1E1E;
-  color: #fff;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+/* Доп. совет: если у вас есть контейнеры с position: relative/absolute вверху страницы,
+   убедитесь, что они не используют отрицательные margin, которые играют с отступами. */

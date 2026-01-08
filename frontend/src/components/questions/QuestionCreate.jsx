@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { createQuestion } from "../api/questions";
+import { createQuestion } from "../../api/questions";
 import QuestionModalForm from "./QuestionModalForm";
-import "../styles/modalform.css";
 
 export default function QuestionCreate() {
   const [open, setOpen] = useState(false);

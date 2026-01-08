@@ -1,5 +1,5 @@
 import React from "react";
-import { updateQuestion } from "../api/questions";
+import { updateQuestion } from "../../api/questions";
 import QuestionModalForm from "./QuestionModalForm";
 
 /**

@@ -1,9 +1,24 @@
+import React from "react";
+import "../styles/header.css"
+import logo from "../assets/logo.svg";
+
 export default function Header() {
-    return (
-        <header>
-            <h1>JustGoIt Questions: Golang</h1>
-            <p>Все вопросы и ответы для успешного прохождения интервью</p>
-            <a href="#start">Начать</a>
-        </header>
-    )
+  return (
+    <header>
+      <div className="header-inner">
+        <div className="brand">
+          {/* Используем класс вместо inline-стиля */}
+          <img src={logo} alt="JustGoIt" className="site-logo" />
+        </div>
+
+        <nav className="header-nav" aria-label="Main navigation">
+          <ul>
+            <li><a href="#questions">Вопросы/Ответы</a></li>
+            <li><a href="#learning">Learning</a></li>
+            <li><a href="#livecoding">LiveCoding</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+  );
 }

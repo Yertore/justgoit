@@ -1,7 +1,6 @@
 import Header from "./Header";
 import Footer from "./Footer";
-import QuestionList from "./QuestionList";
-import Features from "./Features";
+import QuestionList from "./questions/QuestionList";
 import "../index.css"
 
 export default function MainPage() {
