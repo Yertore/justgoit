@@ -1,10 +1,112 @@
+/* Styled pagination matching site look & feel
+   - Uses only .pagination and buttons inside it (plus optional .dots/.prev/.next if needed)
+   - Accessible focus, active/disabled states, compact & responsive
+*/
 
-/* Pagination */
-.pagination { 
-    margin: 20px 0; 
+/* container */
+.pagination {
+  margin: 20px 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
-.pagination button { 
-    margin: 0 5px; 
-    padding: 6px 12px; 
-    cursor: pointer; 
+
+/* base button */
+.pagination button {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 1px solid rgba(15,23,32,0.06);
+  color: #0f1720;
+  padding: 6px 12px;
+  min-width: 40px;
+  height: 36px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 140ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* hover / focus */
+.pagination button:hover,
+.pagination button:focus {
+  background: rgba(0,122,204,0.06); /* subtle blue wash */
+  border-color: rgba(0,122,204,0.16);
+  color: #005fb0;
+  transform: translateY(-2px);
+  outline: none;
+}
+
+/* keyboard focus visible */
+.pagination button:focus-visible {
+  box-shadow: 0 0 0 6px rgba(6,111,255,0.12);
+  border-radius: 10px;
+}
+
+/* current page (active) — strong accent */
+.pagination button.active,
+.pagination button[aria-current="page"] {
+  background: #007acc;
+  border-color: #0060b8;
+  color: #ffffff;
+  transform: none;
+  box-shadow: 0 8px 22px rgba(0,122,204,0.12);
+}
+
+/* prev/next smaller visual weight (optional if you use .prev/.next) */
+.pagination button.prev,
+.pagination button.next {
+  min-width: 36px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+/* disabled */
+.pagination button:disabled,
+.pagination button[disabled] {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+  background: transparent;
+  border-color: rgba(15,23,32,0.04);
+  color: rgba(15,23,32,0.45);
+  box-shadow: none;
+}
+
+/* ellipsis/dots (if you render as <span>) */
+.pagination .dots,
+.pagination .ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* small screens: tighter buttons */
+@media (max-width: 520px) {
+  .pagination {
+    gap: 6px;
+  }
+  .pagination button {
+    padding: 6px 8px;
+    min-width: 34px;
+    height: 34px;
+    font-size: 0.92rem;
+  }
+  .pagination button.prev,
+  .pagination button.next {
+    min-width: 32px;
+    padding: 6px 6px;
+  }
 }

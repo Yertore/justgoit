@@ -1,0 +1,204 @@
+/* Clean responsive footer for JustGoIt (sticky-to-bottom via flex layout) */
+
+/* --- Base container --- */
+.site-footer {
+  position: static !important;   /* гарантируем нормальное поведение в потоке */
+  bottom: auto !important;
+  left: auto !important;
+  right: auto !important;
+  width: 100%;
+  margin-top: auto;              /* прижимает футер вниз в flex-контейнере */
+  flex-shrink: 0;                /* не даём футеру сжиматься */
+  box-sizing: border-box;
+  background: linear-gradient(180deg,#0f1720,#071428);
+  color: #e6eef8;
+  padding: 28px 16px calc(env(safe-area-inset-bottom,0px) + 28px);
+  border-top: 1px solid rgba(255,255,255,0.03);
+}
+
+/* wrapper grid */
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr;
+  gap: 28px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 8px; /* небольшие стороны, управляются на уровне контейнера */
+}
+
+/* brand column */
+.footer-col--brand .footer-logo {
+  display: inline-block;
+  width: 140px;
+  height: auto;
+  margin-bottom: 12px;
+  text-decoration: none;
+  vertical-align: middle;
+}
+.footer-desc {
+  margin: 0;
+  color: rgba(230,238,248,0.9);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  max-width: 320px;
+}
+
+/* titles & lists */
+.footer-title {
+  margin: 0 0 10px;
+  font-size: 0.95rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.footer-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.footer-list a {
+  color: rgba(230,238,248,0.9);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 140ms ease, transform 120ms ease;
+}
+
+.footer-list a:hover,
+.footer-list a:focus {
+  color: #ffd166;
+  transform: translateX(4px);
+}
+
+/* subscribe */
+.footer-col--subscribe .footer-small {
+  margin: 0 0 8px;
+  color: rgba(230,238,248,0.8);
+  font-size: 0.9rem;
+}
+
+.subscribe-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.subscribe-form input[type="email"] {
+  flex: 1 1 220px;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  font-size: 0.95rem;
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.subscribe-form input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.subscribe-form button {
+  background: #ffd166;
+  color: #07203a;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.subscribe-form button:hover,
+.subscribe-form button:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* footer bottom */
+.footer-bottom {
+  margin-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  padding-top: 18px;
+}
+
+.footer-bottom-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.copyright {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(230,238,248,0.8);
+  flex: 0 0 auto;
+}
+
+.legal-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.legal-list a {
+  color: rgba(230,238,248,0.8);
+  text-decoration: none;
+  font-weight: 600;
+}
+.legal-list a:hover { color: #ffd166; transform: translateY(-2px); }
+
+/* accessibility helper */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden;
+  clip: rect(1px,1px,1px,1px);
+  white-space: nowrap;
+}
+
+/* Responsive: collapse to single column on small screens */
+@media (max-width: 880px) {
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-col--brand .footer-logo { width: 120px; }
+}
+
+@media (max-width: 520px) {
+  .site-footer { padding: 22px 12px 22px; }
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .footer-bottom-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .legal-list { gap: 10px; flex-wrap: wrap; }
+  .subscribe-form { flex-direction: column; align-items: stretch; }
+  .subscribe-form button { width: 100%; }
+}
+
+/* --- Safety: remove unexpected margin from last content element before footer --- */
+/* Если у вас крупные карточки или пагинация дают margin-bottom, это может дать "пустое" пространство перед футером.
+   Это правило neutralizes большие margins of direct children in main to avoid white gap. */
+main > *:last-child,
+.app > *:last-child,
+#root > *:last-child {
+  margin-bottom: 0 !important;
+}

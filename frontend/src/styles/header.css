@@ -1,35 +1,15 @@
-/* Fixed top header (full width) — replaces previous header behavior
-   - header фиксирован сверху по всей ширине
-   - body получает padding-top чтобы контент не скрывался под шапкой
-   - нет новых классов, используем только существующие селекторы
-*/
-
-/* header height token */
-:root {
-  --header-height: 72px; /* настройте по вкусу (например 64px, 80px) */
-}
-
-/* Ensure page content isn't hidden under the fixed header */
-body {
-  padding-top: var(--header-height);
-  box-sizing: border-box;
-}
-
-/* Header overall: fixed, full width */
+/* Header overall: fixed, full width (reads --header-height from :root) */
 header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  width: 100%;
   height: var(--header-height);
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
-  color: #0f1720;
-  border-bottom: 1px solid #eef3f6;
   z-index: 1100;
-  display: block;
-  /* subtle shadow to separate from content */
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border-bottom: 1px solid #eef3f6;
   box-shadow: 0 6px 20px rgba(9,30,66,0.04);
+  box-sizing: border-box;
 }
 
 /* Inner container: center content, keep vertical centering */
@@ -41,7 +21,7 @@ header {
   align-items: center;
   justify-content: space-between;
   height: 100%;
-  padding: 0 12px;   /* horizontal padding inside fixed header */
+  padding: 0 12px; /* horizontal padding inside fixed header */
   box-sizing: border-box;
 }
 
@@ -56,7 +36,8 @@ header {
 
 /* Logo sizing — tuned to fit the fixed header */
 .site-logo {
-  height: 56px;   /* уменьшил немного, чтобы логотип не «выпирал» */
+  height: calc(var(--header-height) - 16px); /* чуть меньше, чтобы не «выпирало» */
+  max-height: 56px;
   width: auto;
   display: block;
 }
@@ -130,16 +111,13 @@ header {
   border-radius: 8px;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments (layout / logo, no body changes here) */
 @media (max-width: 920px) {
   .header-nav ul { gap: 16px; }
   .header-nav a { font-size: 0.94rem; }
 }
 
 @media (max-width: 720px) {
-  /* reduce header height on small screens */
-  :root { --header-height: 64px; }
-
   .header-inner {
     flex-direction: column;
     align-items: stretch;
@@ -166,7 +144,4 @@ header {
     height: 40px;
     width: auto;
   }
-
-  /* update body padding-top to match reduced header height */
-  body { padding-top: var(--header-height); }
 }

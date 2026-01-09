@@ -5,10 +5,14 @@ import "../index.css"
 
 export default function MainPage() {
     return (
-        <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+        <>
             <Header />
-            <QuestionList />
-        </div>
-        
+            <main className="site-main">
+                <div className="site-main__inner">
+                  <QuestionList />
+                </div>
+            </main>
+            <Footer />
+        </>
     )
 }

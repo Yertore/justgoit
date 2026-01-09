@@ -1,35 +1,44 @@
-/* Global layout & base styles */
 :root {
-  /* Подстройте высоту шапки под ваш header (должна совпадать с --header-height в header.css) */
   --header-height: 72px;
+  --footer-height: 0px; /* при необходимости можно обновлять через CSS или JS */
 }
 
-html, body {
+/* Базовый reset + глобальный box-sizing */
+html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Ensure page content isn't hidden under fixed header:
-   добавляем отступ сверху равный высоте шапки.
-   !important используется на случай, если где-то переопределяют padding у body.
-*/
-body {
+/* распространить box-sizing на все элементы */
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Корневой контейнер: flex-column, чтобы footer мог прижиматься вниз */
+#root {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+}
+
+/* body стили */
+body {
   font-family: 'Inter', sans-serif;
   background: #F5F5F5;
   color: #1E1E1E;
-  min-height: 100vh;
-
-  padding-top: var(--header-height) !important;
+  margin: 0;
+  min-height: 100%;
 }
 
-/* main остаётся флекс-элементом для растяжения контента */
-main {
-  flex: 1;
+/* MAIN: занимает пространство между header и footer, корректно растёт под контент */
+main, .site-main {
+  box-sizing: border-box;
+  padding-top: var(--header-height);           /* резерв под фиксированную шапку (если она fixed) */
+  padding-bottom: var(--footer-height);        /* резерв под футер (если нужен) */
+  flex: 1 0 auto;                              /* базовый размер = контент, не сжимать ниже содержимого */
+  height: auto;
+  min-height: 0;                               /* важно для корректного скролла внутри flex */
+  overflow: visible;
 }
-
-/* Доп. совет: если у вас есть контейнеры с position: relative/absolute вверху страницы,
-   убедитесь, что они не используют отрицательные margin, которые играют с отступами. */
